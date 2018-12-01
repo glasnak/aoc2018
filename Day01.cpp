@@ -1,0 +1,35 @@
+// --- Day 1: Chronal Calibration ---
+// Part one actually solved with awk:
+//   awk '{ sum+=$1} END {print sum}' input_01.txt
+// 
+
+#include "Day01.h"
+
+void Day01::solvePart1() {
+  std::cout << " **** DAY 1: part 1 ****\n";
+  Nums.clear();
+  Nums = Util::getNumbers("inputs/input_01.txt");
+  int Acc = std::accumulate(Nums.begin(), Nums.end(), 0);
+  std::cout << Acc << "\n";
+  return;
+}
+
+void Day01::solvePart2() {
+  std::cout << " **** DAY 1: part 2 ****\n";
+  if (Nums.empty())
+    Nums = Util::getNumbers("inputs/input_01.txt");
+  std::unordered_set<int> Sums;
+  int Sum = 0;
+  unsigned NumSums = 1;
+  Sums.insert(0);
+  while (true) {
+    for (int N : Nums) {
+      Sum += N;
+      Sums.emplace(Sum);
+      if (++NumSums != Sums.size()) {
+        std::cout << Sum << "\n";
+        return;
+      }
+    }
+  }
+}
