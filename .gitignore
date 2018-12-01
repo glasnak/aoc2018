@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+*.elf
+*.xexe
+
+# IDE
+.vscode
+
