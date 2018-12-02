@@ -3,6 +3,7 @@
 
 #include "Day.h"
 #include "Day01.h"
-// #include "Day02.h"
+#include "Day02.h"
+// #include "Day03.h"
 
 
