@@ -1,6 +1,7 @@
 #pragma once
 // On the first day of attempting to implement Advent of Code 2018, I have tried
-// to do everything in C++. I was soon to be awakened to the reality of 
+// to do everything in C++. I was soon to be awakened to the reality of
+// regretting this.
 
 #include "Day.h"
 

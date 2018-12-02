@@ -12,8 +12,8 @@ template <typename T> Day *instantiator() { return new T; }
 typedef Day *(*instantiator_ptr)();
 const instantiator_ptr Classes[] = {
     nullptr, 
-    &instantiator<Day01>
-    // &instantiator<Day02>,
+    &instantiator<Day01>,
+    &instantiator<Day02>,
     // &instantiator<Day03>
 };
 
@@ -32,11 +32,13 @@ int main(int argc, char const *argv[]) {
   }
   if (DayNum) {
     Day *D = Classes[DayNum]();
-    D->dump();
-    D->solvePart1();
-    D->solvePart2();
+    D->prettySolve();
   } else {
-    std::cout << "Solving all the days...\n";
+    std::cout << "Solving all days:\n";
+    for (auto i = 1; i < 3; ++i) {  // FIXME: magic 3
+      Day *D = Classes[i]();
+      D->prettySolve();
+    }
   }
 
   return 0;

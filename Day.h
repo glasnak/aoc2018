@@ -14,7 +14,14 @@ public:
   virtual ~Day() = default;
   // virtual ~Day() = 0;
   virtual void dump() const {
-    std::cerr << "Day #" << Number << "\n";
+    std::cout << "\n--------------- Day #" << Number << "\n";
+  }
+  virtual void prettySolve() {
+    dump();
+    std::cout << "Part1:\t";
+    solvePart1();
+    std::cout << "Part2:\t";
+    solvePart2();
   }
 };
 
