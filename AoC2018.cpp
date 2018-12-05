@@ -14,7 +14,14 @@ const instantiator_ptr Classes[] = {
     nullptr,
     &instantiator<Day01>,
     &instantiator<Day02>,
-    // &instantiator<Day03>
+    &instantiator<Day03>,
+    &instantiator<Day04>,
+    &instantiator<Day05>,
+//    &instantiator<Day06>,
+//    &instantiator<Day07>,
+//    &instantiator<Day08>,
+//    &instantiator<Day09>,
+//    &instantiator<Day10>,
 };
 
 // Run all the tests of the AoC
