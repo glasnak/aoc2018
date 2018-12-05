@@ -7,7 +7,7 @@ void Day02::solvePart1() {
   Strings = Util::getLines("inputs/input_02.txt");
   int Twos = 0;
   int Threes = 0;
-  for (auto Str : Strings) {
+  for (const auto &Str : Strings) {
     // py: collections.Counter
     std::map<char, int> LineCounter;
     for (char Ch : Str)
@@ -30,7 +30,6 @@ void Day02::solvePart1() {
     LineCounter.clear();
   }
   std::cout << Twos * Threes << "\n";
-  return;
 }
 
 void Day02::solvePart2() {

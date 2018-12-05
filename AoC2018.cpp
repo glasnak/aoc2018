@@ -11,7 +11,7 @@ template <typename T> Day *instantiator() { return new T; }
 
 typedef Day *(*instantiator_ptr)();
 const instantiator_ptr Classes[] = {
-    nullptr, 
+    nullptr,
     &instantiator<Day01>,
     &instantiator<Day02>,
     // &instantiator<Day03>

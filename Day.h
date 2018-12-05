@@ -6,9 +6,9 @@
 class Day {
 protected:
   int Number;
-public:
 
-  Day(int Num) : Number(Num) {}
+public:
+  explicit Day(int Num) : Number(Num) {}
   virtual void solvePart1() = 0;
   virtual void solvePart2() = 0;
   virtual ~Day() = default;
@@ -24,5 +24,3 @@ public:
     solvePart2();
   }
 };
-
-

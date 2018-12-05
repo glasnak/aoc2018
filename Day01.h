@@ -14,5 +14,5 @@ public:
   void solvePart1() override;
   void solvePart2() override;
   // ~Day01() = default;
-  ~Day01() override {}
+  ~Day01() override = default;
 };
