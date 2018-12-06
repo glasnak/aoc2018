@@ -5,7 +5,7 @@ set (YEAR "2018")
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 
 find_program(LSB_RELEASE_EXEC lsb_release)
