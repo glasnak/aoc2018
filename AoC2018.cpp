@@ -17,7 +17,7 @@ const instantiator_ptr Classes[] = {
     &instantiator<Day03>,
     &instantiator<Day04>,
     &instantiator<Day05>,
-//    &instantiator<Day06>,
+    &instantiator<Day06>,
 //    &instantiator<Day07>,
 //    &instantiator<Day08>,
 //    &instantiator<Day09>,
@@ -42,7 +42,7 @@ int main(int argc, char const *argv[]) {
     D->prettySolve();
   } else {
     std::cout << "Solving all days:\n";
-    for (auto i = 1; i < 6; ++i) {  // FIXME: magic number
+    for (auto i = 1; i < 7; ++i) {  // FIXME: magic number
       Day *D = Classes[i]();
       D->prettySolve();
     }
