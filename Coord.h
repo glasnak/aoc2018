@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <iostream>
 
 struct Coord {
   int x;
