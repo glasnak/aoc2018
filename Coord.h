@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstddef>
-#include <iostream>
+#include <cstddef>  // size_t
+#include <iostream> // cout
 
 struct Coord {
   int x;
