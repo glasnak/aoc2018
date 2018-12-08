@@ -13,7 +13,7 @@ template <typename T> struct Matrix {
   /// init matrix with default values
   void fill(T BaseItem) {
     for (unsigned i = 0; i < Rows; ++i) {
-      M.push_back(std::vector<T>(Columns, BaseItem));
+      M.emplace_back(std::vector<T>(Columns, BaseItem));
     }
   }
 
@@ -32,14 +32,10 @@ template <typename T> struct Matrix {
   }
 
   /// get the underlying structure
-  std::vector<std::vector<T>> get() {
-    return M;
-  }
+  std::vector<std::vector<T>> get() { return M; }
 
   /// return the underlying value on position \Cell.
-  T getValue(Coord Cell) {
-    return M[Cell.x][Cell.y];
-  }
+  T getValue(Coord Cell) { return M[Cell.x][Cell.y]; }
 
   /// print the matrix itself for debug purposes
   void dump() const {

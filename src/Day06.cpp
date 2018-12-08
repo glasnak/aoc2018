@@ -15,7 +15,7 @@ static Coord findMaxPoint(std::vector<Coord> Pts) {
 
 // shift the points to get a different-sized matrix
 void Day06::shiftPointsBy(int x, int y) {
-  std::transform(std::begin(Points), std::end(Points), std::begin(Points),
+  std::transform(Points.begin(), Points.end(), Points.begin(),
                  [x, y](Coord xy) { return Coord(xy.x + x, xy.y + y); });
 }
 

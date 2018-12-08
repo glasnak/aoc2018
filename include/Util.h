@@ -24,7 +24,7 @@ struct Util {
     std::vector<std::string> Text;
     std::string Line;
     while (std::getline(Infile, Line)) {
-      Text.push_back(Line);
+      Text.emplace_back(Line);
     }
     return Text;
   }
@@ -35,7 +35,7 @@ struct Util {
     std::string NumStr;
     while (Infile >> NumStr) {
       int Num = std::stoi(NumStr);
-      Nums.push_back(Num);
+      Nums.emplace_back(Num);
     }
     return Nums;
   }
@@ -46,7 +46,7 @@ struct Util {
     std::string Line;
     while (Infile >> Line) {
       for (char C : Line) {
-        Q.push_back(C);
+        Q.emplace_back(C);
       }
     }
     return Q;
@@ -68,7 +68,7 @@ struct Util {
     int a, b;
     char c;
     while ((Infile >> a >> c >> b) && c == ',') {
-      Result.push_back({a, b});
+      Result.emplace_back(Coord(a, b));
     }
     return Result;
   }

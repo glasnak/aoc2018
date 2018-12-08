@@ -11,7 +11,7 @@ std::deque<char> Day05::reactPolymer(std::deque<char> PolymerQ) {
   char Popper;
   while (!PolymerQ.empty()) {
     Popper = PolymerQ.front();
-    NewPolymerQ.push_back(Popper);
+    NewPolymerQ.emplace_back(Popper);
     PolymerQ.pop_front();
     while (!NewPolymerQ.empty() && !PolymerQ.empty() &&
            react(NewPolymerQ.back(), PolymerQ.front())) {
