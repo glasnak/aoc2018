@@ -16,6 +16,8 @@
 #include <unordered_set>
 #include <vector>
 
+#include "Coord.h"
+
 struct Util {
   static std::vector<std::string> getLines(const std::string &Filename) {
     std::ifstream Infile(Filename);
@@ -59,10 +61,9 @@ struct Util {
 
   // Comma-separated input of two numbers? int a, b; char c; while ((infile >> a
   // >> c >> b) && (c == ','))
-  static std::vector<std::pair<int, int>>
-  getNumPairs(const std::string &Filename) {
+  static std::vector<Coord> getCoord(const std::string &Filename) {
     std::ifstream Infile(Filename);
-    std::vector<std::pair<int, int>> Result;
+    std::vector<Coord> Result;
     std::string Line;
     int a, b;
     char c;
