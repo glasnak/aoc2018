@@ -42,7 +42,8 @@ int main(int argc, char const *argv[]) {
     D->prettySolve();
   } else {
     std::cout << "Solving all days:\n";
-    for (auto i = 1; i < 7; ++i) {  // FIXME: magic number
+    int NumDays = sizeof(Classes) / sizeof(void *);
+    for (auto i = 1; i < NumDays; ++i) {
       Day *D = Classes[i]();
       D->prettySolve();
     }
