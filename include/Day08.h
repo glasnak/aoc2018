@@ -6,7 +6,6 @@
 
 class Day08 : public Day {
 private:
-  std::deque<int> NumQ;
   Tree<int> T;
 
 public:
