@@ -2,7 +2,7 @@
 
 #include "Day11.h"
 
-constexpr void Day11::fillGrid(const unsigned GridSize,
+void Day11::fillGrid(const unsigned GridSize,
                                const unsigned SerialNumber) {
   Grid = Matrix<long>(GridSize, GridSize);
   Grid.fill(0);

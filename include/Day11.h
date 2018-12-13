@@ -8,7 +8,7 @@ private:
   const unsigned SerialNumber = 5535;
   const unsigned GridSize = 300;
   Matrix<long> Grid;
-  constexpr void fillGrid(unsigned GridSize, unsigned SerialNumber);
+  void fillGrid(unsigned GridSize, unsigned SerialNumber);
   Matrix<long> sumGrid(unsigned SquareSize);
 
 public:
