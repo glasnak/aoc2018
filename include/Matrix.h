@@ -37,6 +37,22 @@ template <typename T> struct Matrix {
   /// return the underlying value on position \Cell.
   T getValue(Coord Cell) { return M[Cell.x][Cell.y]; }
 
+  // return the coord of the max element
+  Coord findMaxElement(T &MaxElem) {
+    MaxElem = std::numeric_limits<T>::min();
+    Coord MaxElemPos;
+    for (unsigned i = 0; i < Rows; ++i) {
+      for (unsigned j = 0; j < Columns; ++j) {
+        T Value = M[i][j];
+        if (MaxElem < Value) {
+          MaxElem = Value;
+          MaxElemPos = Coord(i, j);
+        }
+      }
+    }
+    return MaxElemPos;
+  }
+
   /// print the matrix itself for debug purposes
   void dump() const {
     std::cout << "Matrix of size " << Rows << "x" << Columns << ":\n";
