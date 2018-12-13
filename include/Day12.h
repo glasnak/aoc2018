@@ -5,7 +5,14 @@
 
 class Day12 : public Day {
 private:
-  std::map<std::bitset<5>, bool> Rules;
+  // usage of bitset as a key to the map requires ability to compare them:
+  struct BitsetComparer {
+    bool operator()(const std::bitset<5> &b1, const std::bitset<5> &b2) const {
+      return b1.to_ulong() < b2.to_ulong();
+    }
+  };
+
+  std::map<std::bitset<5>, bool, BitsetComparer> Rules;
   std::bitset<1000> Pots;
   void parseInput();
   int centralizePots();
