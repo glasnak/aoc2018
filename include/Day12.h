@@ -2,17 +2,24 @@
 
 #include "Day.h"
 #include <bitset>
+#include <unordered_map>
+
+
+#define NUM_POTS 1000
 
 class Day12 : public Day {
 private:
   // usage of bitset as a key to the map requires ability to compare them:
-  struct BitsetComparer {
-    bool operator()(const std::bitset<5> &b1, const std::bitset<5> &b2) const {
-      return b1.to_ulong() < b2.to_ulong();
-    }
-  };
-  std::map<std::bitset<5>, bool, BitsetComparer> Rules;
-  std::bitset<1000> Pots;
+  // struct BitsetComparer {
+  //   bool operator()(const std::bitset<5> &b1, const std::bitset<5> &b2)
+  //   const {
+  //     return b1.to_ulong() < b2.to_ulong();
+  //   }
+  // };
+  /// OR you can just use unordered_map ;)
+  std::unordered_map<std::bitset<5>, bool> Rules;
+  std::bitset<NUM_POTS> Pots;
+  std::unordered_set<std::bitset<NUM_POTS>> Configurations;
   void parseInput();
   void advance();
   void printGeneration();
