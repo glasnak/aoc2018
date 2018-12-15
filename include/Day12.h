@@ -11,12 +11,15 @@ private:
       return b1.to_ulong() < b2.to_ulong();
     }
   };
-
   std::map<std::bitset<5>, bool, BitsetComparer> Rules;
   std::bitset<1000> Pots;
   void parseInput();
-  int centralizePots();
   void advance();
+  void printGeneration();
+  long sumPlants();
+
+  // part2
+  int centralizePots();
 
 public:
   Day12() : Day(12) {}
