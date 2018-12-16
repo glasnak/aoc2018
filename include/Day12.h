@@ -4,8 +4,7 @@
 #include <bitset>
 #include <unordered_map>
 
-
-#define NUM_POTS 1000
+#define NUM_POTS 2000
 
 class Day12 : public Day {
 private:
@@ -19,11 +18,10 @@ private:
   /// OR you can just use unordered_map ;)
   std::unordered_map<std::bitset<5>, bool> Rules;
   std::bitset<NUM_POTS> Pots;
-  std::unordered_set<std::bitset<NUM_POTS>> Configurations;
   void parseInput();
   void advance();
   void printGeneration();
-  long sumPlants();
+  long sumPlants(long Centralization = 0);
 
   // part2
   int centralizePots();
