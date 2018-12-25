@@ -55,7 +55,7 @@ template <typename T> struct Matrix {
   }
 
   /// print the matrix itself for debug purposes
-  void dump() const {
+  void dump(std::string Delimiter = ", ") const {
     std::cout << "Matrix of size " << Rows << "x" << Columns << ":\n";
     if (M.empty()) {
       std::cout << "Matrix empty.\n";
@@ -63,7 +63,7 @@ template <typename T> struct Matrix {
     }
     for (unsigned i = 0; i < Rows; ++i) {
       for (unsigned j = 0; j < Columns; ++j) {
-        std::cout << M[i][j] << ",  ";
+        std::cout << M[i][j] << Delimiter;
       }
       std::cout << "\n";
     }
