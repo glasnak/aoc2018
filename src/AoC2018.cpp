@@ -25,7 +25,7 @@ const instantiator_ptr Classes[] = {
     &instantiator<Day11>,
     &instantiator<Day12>,
     &instantiator<Day13>,
-//    &instantiator<Day14>,
+    &instantiator<Day14>,
 //    &instantiator<Day15>,
 //    &instantiator<Day16>,
 //    &instantiator<Day17>,
