@@ -12,6 +12,7 @@ template <typename T> struct Matrix {
 
   /// init matrix with default values
   void fill(T BaseItem) {
+    M.clear();
     for (unsigned i = 0; i < Rows; ++i) {
       M.emplace_back(std::vector<T>(Columns, BaseItem));
     }

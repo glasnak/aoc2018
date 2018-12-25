@@ -3,6 +3,13 @@
 #include <cstddef>  // size_t
 #include <iostream> // cout
 
+enum /*class*/ Direction {
+  NORTH = 0,
+  EAST,
+  SOUTH,
+  WEST
+};
+
 struct Coord {
   int x;
   int y;
