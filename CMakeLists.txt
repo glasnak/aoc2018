@@ -14,8 +14,8 @@ execute_process(COMMAND ${LSB_RELEASE_EXEC} -is
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
-if (${LSB_RELEASE_ID_SHORT} STREQUAL Ubuntu)
-  message("-- Running on Ubuntu")
+if (${LSB_RELEASE_ID_SHORT} STREQUAL Ubuntu OR ${LSB_RELEASE_ID_SHORT} STREQUAL Debian)
+  message("-- Running on Ubuntu/Debian")
 else ()
   set(CMAKE_C_COMPILER /media/narnia/glasnak/pure-llvm/llvm-7.0.0.src/build/bin/clang)
   set(CMAKE_CXX_COMPILER /media/narnia/glasnak/pure-llvm/llvm-7.0.0.src/build/bin/clang++)
