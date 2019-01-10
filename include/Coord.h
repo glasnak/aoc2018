@@ -7,7 +7,8 @@ enum /*class*/ Direction {
   NORTH = 0,
   EAST,
   SOUTH,
-  WEST
+  WEST,
+  INVALID
 };
 
 struct Coord {

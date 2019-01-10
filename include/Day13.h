@@ -60,6 +60,7 @@ struct RailroadGrid : Matrix<char> {
             case Direction::EAST:  std::cout << ">"; break;
             case Direction::SOUTH: std::cout << "v"; break;
             case Direction::WEST:  std::cout << "<"; break;
+            case Direction::INVALID: assert(false);
             }
             Printed = true;
           }

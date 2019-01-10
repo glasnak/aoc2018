@@ -23,6 +23,7 @@ void RailroadGrid::advanceCart(MineCart &MC) {
   case Direction::EAST:  NextCell = Coord(MC.Position.x,   MC.Position.y+1); break;
   case Direction::SOUTH: NextCell = Coord(MC.Position.x+1, MC.Position.y  ); break;
   case Direction::WEST:  NextCell = Coord(MC.Position.x,   MC.Position.y-1); break;
+  case Direction::INVALID: assert(false);
   }
   // N+/ => (E +1)   N+\ => (W -1)
   // E+/ => (N -1)   E+\ => (S +1)
