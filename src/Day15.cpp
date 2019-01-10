@@ -30,10 +30,12 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
   return Neighbours;
 }
 
-
 // go through the neighbours, incrementally adding them until we find the target. 
 // Recurse back from it until we find the direction to go to.
-bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep, std::unordered_set<Coord, /* hash= */ Coord> Visited) {
+bool Dungeon::findTarget(Coord C,
+                         char Target,
+                         Direction &FirstStep,
+                         std::unordered_set<Coord, /* hash= */ Coord> Visited) {
 //  char Target = (Race == 'E') ? 'G' : 'E';  // Race != Target is enough
   Visited.insert(C);
   C.dump();
@@ -44,7 +46,8 @@ bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep, std::unorde
       continue;
     }
     if (getValue(Nbor) == Target) {
-      std::cout << "found the target, it is "; Nbor.dump();
+      std::cout << "found the target, it is ";
+      Nbor.dump();
       return true;  // asserting Nbors are sorted and this is the correct Nbor..
     } else if (getValue(Nbor) == 'G' || getValue(Nbor) == 'E') { // colleague, don't follow.
       continue;
@@ -52,8 +55,10 @@ bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep, std::unorde
       std::cout << getValue(Nbor) << "\n";
       assert(getValue(Nbor) == '.');
     }
-    std::cout << "In: "; C.dump();
-    std::cout << "     Nbor: "; Nbor.dump();
+    std::cout << "In: ";
+    C.dump();
+    std::cout << "     Nbor: ";
+    Nbor.dump();
     // only save the first step, rest of the path is not necessary.
     if (FirstStep == Direction::INVALID) {
       if (Nbor.x < C.x)
@@ -67,7 +72,9 @@ bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep, std::unorde
     }
     /// BFS
     if (findTarget(Nbor, Target, FirstStep, Visited)) {
-      std::cout << "FOUND ( "; Nbor.dump(); std::cout << ")\n";
+      std::cout << "FOUND ( ";
+      Nbor.dump();
+      std::cout << ")\n";
       return true;
     }
   }
@@ -102,7 +109,6 @@ void Day15::fight() {
     Cave.dump();
   }
 }
-
 
 void Day15::solvePart1() {
   std::vector<std::string> Lines = Util::getLines("inputs/input_15_test.txt");

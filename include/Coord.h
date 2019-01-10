@@ -10,6 +10,8 @@ enum /*class*/ Direction {
   WEST,
   INVALID
 };
+// N,E,S,W movement:
+const std::vector<std::pair<int, int>> Move{{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
 struct Coord {
   int x;
