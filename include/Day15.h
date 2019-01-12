@@ -10,19 +10,19 @@ struct Dungeon : Matrix<char> {
 
   // Represent a creature in a Dungeon (Elf or Goblin).
   struct Creature {
-    explicit Creature(char R, Coord Pos) : Race(R), Position(Pos), Health(200) {};
+    Creature(char R, Coord Pos) : Race(R), Position(Pos), Health(200) {};
     // can Attack or Move.
     char Race;  // G for Goblin, E for Elf.
     Coord Position;
     int Health;
     // for std::sort;
-    bool operator<(const Creature &rhs) const {
-      if (Position.y < rhs.Position.y)
+    bool operator<(const Creature &rhs) const { // Note reversed x,y
+      if (Position.x < rhs.Position.x)
         return true;
-      else if (Position.y > rhs.Position.y)
+      else if (Position.x > rhs.Position.x)
         return false;
       else
-        return Position.x < rhs.Position.x;
+        return Position.y < rhs.Position.y;
     }
     bool operator==(const Creature &rhs) const {
       return Position == rhs.Position && Race == rhs.Race && Health == rhs.Health;
