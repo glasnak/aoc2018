@@ -24,6 +24,16 @@ struct Coord {
   bool operator==(const Coord &other) const {
     return (x == other.x && y == other.y);
   }
+  
+  // Necessary to use as a map key
+  bool operator<(const Coord &rhs) const { // reversed x,y?
+    if (x < rhs.x)
+      return true;
+    else if (x > rhs.x)
+      return false;
+    else
+      return y < rhs.y;
+  }
 
   // needed for unordered_set hashing
   size_t operator()(const Coord &ToHash) const noexcept {
