@@ -9,14 +9,14 @@ struct Dungeon : Matrix<char> {
   Dungeon(const unsigned int &R, const unsigned int &C) : Matrix(R, C) {};
 
   // Represent a creature in a Dungeon (Elf or Goblin).
-  struct Creature {
-    Creature(char R, Coord Pos) : Race(R), Position(Pos), Health(200) {};
+  struct Unit {
+    Unit(char R, Coord Pos) : Race(R), Position(Pos), Health(200) {};
     // can Attack or Move.
     char Race;  // G for Goblin, E for Elf.
     Coord Position;
     int Health;
     // for std::sort;
-    bool operator<(const Creature &rhs) const { // Note reversed x,y
+    bool operator<(const Unit &rhs) const { // Note reversed x,y
       // FIXME: use Coord::operator< instead.
       if (Position.x < rhs.Position.x)
         return true;
@@ -25,10 +25,10 @@ struct Dungeon : Matrix<char> {
       else
         return Position.y < rhs.Position.y;
     }
-    bool operator==(const Creature &rhs) const {
+    bool operator==(const Unit &rhs) const {
       return Position == rhs.Position && Race == rhs.Race && Health == rhs.Health;
     }
-    bool operator!=(const Creature &rhs) const {
+    bool operator!=(const Unit &rhs) const {
       return !(rhs == *this);
     }
 
@@ -43,12 +43,9 @@ struct Dungeon : Matrix<char> {
   }
 
   std::vector<Coord> getNeighbours(Coord Pos);
-  bool findTarget(Coord C,
-                  char Target,
-                  Direction &FirstStep,
-                  std::unordered_set<Coord, /* hash= */ Coord> Visited);
-  void move(Creature C, Direction Dir);
-  std::vector<Creature> Creatures;
+  bool findTarget(Coord C, char Target, Direction &FirstStep);
+  void move(Unit C, Direction Dir);
+  std::vector<Unit> Creatures;
 };
 
 class Day15 : public Day {
