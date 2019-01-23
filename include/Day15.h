@@ -17,6 +17,7 @@ struct Dungeon : Matrix<char> {
     int Health;
     // for std::sort;
     bool operator<(const Creature &rhs) const { // Note reversed x,y
+      // FIXME: use Coord::operator< instead.
       if (Position.x < rhs.Position.x)
         return true;
       else if (Position.x > rhs.Position.x)

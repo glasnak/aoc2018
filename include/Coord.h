@@ -2,15 +2,16 @@
 
 #include <cstddef>  // size_t
 #include <iostream> // cout
+#include <vector>   // Move
 
 enum /*class*/ Direction {
-  NORTH = 0,
+  NORTH,
   EAST,
   SOUTH,
   WEST,
   INVALID
 };
-// N,E,S,W movement:
+                                          // N,E,S,W movement:
 const std::vector<std::pair<int, int>> Move{{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
 struct Coord {
