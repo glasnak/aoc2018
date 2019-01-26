@@ -126,6 +126,10 @@ void Dungeon::move(Unit &U) {
   insert('.', Pos);
 }
 
+bool Dungeon::attack(Unit U) {
+  return false;
+}
+
 /// One round of the Fight, all Creatures perform one movement or attack.
 void Day15::tick() {
   // reading order:
@@ -133,14 +137,13 @@ void Day15::tick() {
 
 //  int counter = 0;
 
-  for (auto &C : Cave.Units) {
+  for (auto &U : Cave.Units) {
     Cave.mapEnemies('G');
     Cave.mapEnemies('E');
-    C.Position.dump();
-    Direction Step = Direction::INVALID;
-    // TODO: is any target directly in range?
-//    Cave.findTarget(C.Position, Target, Step);
-    Cave.move(C);
+    U.Position.dump();
+    // TODO: is any target directly in range? Attack if so.
+    if (!Cave.attack(U))
+      Cave.move(U);
     std::cout << "Done with step.\n\n";
 //    if (++counter > 4)
 //      return; // let's go just once.
