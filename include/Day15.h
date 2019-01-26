@@ -43,9 +43,12 @@ struct Dungeon : Matrix<char> {
   }
 
   std::vector<Coord> getNeighbours(Coord Pos);
-  bool findTarget(Coord C, char Target, Direction &FirstStep);
-  void move(Unit C, Direction Dir);
-  std::vector<Unit> Creatures;
+  void mapEnemies(char EnemyRace);
+  void move(Unit &U, Direction Dir);
+
+  std::vector<Unit> Units;
+  std::map<Coord, int> ElfDistances;
+  std::map<Coord, int> GobDistances;
 };
 
 class Day15 : public Day {

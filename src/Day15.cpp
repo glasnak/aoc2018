@@ -37,80 +37,84 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
 //  return Direction::INVALID;
 //}
 
-// go through the neighbours, incrementally adding them until we find the target. 
-// Recurse back from it until we find the direction to go to.
-//// FIXME Unit instead of C+Target;
-bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep) {
-//  char Target = (Race == 'E') ? 'G' : 'E';  // Race != Target is enough
-//  std::unordered_set<Coord, /* hash= */ Coord> Visited;
-//  Visited.insert(C);
-  C.dump();
-  std::map<Coord, Direction> VisitedFrom;
-  VisitedFrom[C] = Direction::INVALID;
-  // init Neighbor queue:
-  Coord Source = C;
-  std::deque<Coord> Neighbours;
-  std::deque<Coord> NextNeighbours; /// Nbors with distance +1, don't mix them.
-  for (auto N : getNeighbours(Source)) {
-    Neighbours.push_back(N);
+
+/// Create a new Dungeon with numbers instead of empty spaces, indicating the distance from the closest enemy.
+/// Unit can then simply browse through directions and choose closest enemy available.
+
+
+/// Algorithm:
+/// Go through all the units.
+/// For each U, add its Coord to the map as zero.
+/// Then, add each of its neighbours as ones. increment, then add the new neighbours of those.
+/// Continue until you run out of neighbours.
+void Dungeon::mapEnemies(char EnemyRace) {
+  // TODO: make ElfDistances and GobDistances part of Dungeon.
+  // . are empty, anything else is a barrier, including a friend and #.
+  // for all . neighbours, map them with the shortest distance.
+  // From each enemy, go until you can't find any empty space, increasing the distance on each step.
+  std::map<Coord,int> &Distances = (EnemyRace == 'G') ? ElfDistances : GobDistances;
+  Distances.clear();
+  // Add each enemy as a 0 distance.
+  int Distance = 0;
+  for (auto U : Units) {
+    if (U.Race != EnemyRace)
+      continue;
+    Distances[U.Position] = Distance;
+  }
+  do {
+    // Now, get all the Neighbours.
+    std::vector<Coord> Nbors;
+    for (auto Pair : Distances) {   /// Walk first through all Elves, for each Elf...
+      if (Pair.second != Distance)
+        continue;
+      for (Coord Nbor : getNeighbours(Pair.first)) { /// find its 0..4 Nbors and....
+        if (getValue(Nbor) == '.' && Distances.count(Nbor) == 0)    /// if it's a valid Nbor....
+          Nbors.emplace_back(Nbor);     /// Add it as a Nbor.
+      }
+    }
+    if (Nbors.empty())
+      break;
+    Distance++;
+    // Now that we've found the Nbors we have, let's add them to the map with Distance=1
+    for (auto N : Nbors) {
+      Distances[N] = Distance;
+    }
+  } while (true);
+
+  /////////////////////////////
+  for (unsigned i = 0; i < Rows; ++i) {
+    for (unsigned j = 0; j < Columns; ++j) {
+      if (Distances.count(Coord(i, j)))
+        std::cout << Distances[Coord(i,j)];
+      else
+        std::cout << M[i][j];
+    }
+    std::cout << "\n";
   }
 
-  // go through neighbours until you find the target.
-  do {
-    std::cout << "\n CHECKING OUT "; Source.dump();
-    std::cout << "Neighbours (" << Neighbours.size() << "):\n";
-    for (auto N : Neighbours) {
-      N.dump();
-    }
-    auto Nbor = Neighbours.front();
-    Neighbours.pop_front();
-
-    // for each location, check it and add it at the end of the queue.
-    if (VisitedFrom.count(Nbor)) {
-      std::cout << "Already visited: "; Nbor.dump();
-      continue;
-    }
-    if (VisitedFrom[Source] == Direction::INVALID) { /// This is the first step.
-      std::cout << "Found first step.\n";
-      if (Nbor.x < Source.x)
-        VisitedFrom[Nbor] = Direction::NORTH;
-      else if (Source.x < Nbor.x)
-        VisitedFrom[Nbor] = Direction::SOUTH;
-      else if (Nbor.y < Source.y)
-        VisitedFrom[Nbor] = Direction::WEST;
-      else if (Source.y < Nbor.y)
-        VisitedFrom[Nbor] = Direction::EAST;
-    } else { // not first step, follow the first anyway;
-      VisitedFrom[Nbor] = VisitedFrom[Source];
-    }
-    if (getValue(Nbor) == Target) {   // enemy found
-      std::cout << "Step to " << VisitedFrom[Nbor] << "\n";
-      // FIXME just return this instead
-      FirstStep = VisitedFrom[Nbor];
-      return true;
-    } else if (getValue(Nbor) == 'G' || getValue(Nbor) == 'E') {
-      continue;
-    } else {
-      assert(getValue(Nbor) == '.' && "");
-    }
-    // Setup for next:
-
-    Source = Nbor;
-    /// Add next neighbours:
-    for (auto N : getNeighbours(Source)) {
-      if (VisitedFrom.count(N) == 0)
-        if (std::find(Neighbours.begin(), Neighbours.end(), N) == Neighbours.end()
-         && std::find(NextNeighbours.begin(), NextNeighbours.end(), N) == NextNeighbours.end())
-          Neighbours.push_back(N);
-    }
-  } while (!Neighbours.empty());
-  std::cout << "not found!\n";
-  return false;
+  ////////////////////////////////
 }
 
-void Dungeon::move(Unit C, Direction Dir) {
+
+void Dungeon::move(Unit &U, Direction Dir) {
+  // find Direction to go to. Free Dir variable:
+  auto DirMap = (U.Race == 'E') ? ElfDistances : GobDistances;
+  std::pair<Direction, int> Min = {Direction::INVALID, 1000000};
+  for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
+    Coord NborPosition = Coord(U.Position.x + Move[D].first, U.Position.y + Move[D].second);
+    if (DirMap.count(NborPosition)) {
+      if (Min.second > DirMap[NborPosition]) {  // '>': Keep the first min if there's more equally distant positions.
+        Min = {D, DirMap[NborPosition]};
+      }
+    }
+  }
+  Dir = Min.first;
+
+  assert(Min.first != Direction::INVALID);
+
+  // rest of the old function, clean me up:
   std::cout << "trying to move to " << Dir << "\n";
-  Coord Pos = C.Position;
+  Coord Pos = U.Position;
   if (Dir == Direction::INVALID)
     assert(!"Invalid direction!\n");
   Coord NewPos = Coord(Pos.x + Move[Dir].first, Pos.y + Move[Dir].second);
@@ -120,6 +124,7 @@ void Dungeon::move(Unit C, Direction Dir) {
   NewPos.dump();
   std::cout << "moving to [" << getValue(NewPos) << "]\n";
   assert(getValue(NewPos) == '.');  // for now.
+  U.Position = NewPos;
   insert(Val, NewPos);
   insert('.', Pos);
 }
@@ -135,14 +140,13 @@ void Day15::tick() {
     Cave.mapEnemies('G');
     Cave.mapEnemies('E');
     C.Position.dump();
-    char Target = (C.Race == 'E') ? 'G' : 'E';
     Direction Step = Direction::INVALID;
     // TODO: is any target directly in range?
-    Cave.findTarget(C.Position, Target, Step);
+//    Cave.findTarget(C.Position, Target, Step);
     Cave.move(C, Step);
     std::cout << "Done with step.\n\n";
-    if (++counter > 1)
-      return; // let's go just once.
+//    if (++counter > 4)
+//      return; // let's go just once.
   }
 }
 
