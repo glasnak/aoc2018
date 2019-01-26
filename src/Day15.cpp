@@ -3,6 +3,9 @@
 #include "Day15.h"
 #include "Tree.h"
 
+
+#define DEBUG
+
 // FIXME: make CharMatrix and inherit these.
 void Dungeon::initialize(std::vector<std::string> Lines) {
   fill(' ');
@@ -42,16 +45,11 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
 /// Unit can then simply browse through directions and choose closest enemy available.
 
 
-/// Algorithm:
 /// Go through all the units.
 /// For each U, add its Coord to the map as zero.
-/// Then, add each of its neighbours as ones. increment, then add the new neighbours of those.
+/// Then, add each of its neighbours with incrementing distance.
 /// Continue until you run out of neighbours.
 void Dungeon::mapEnemies(char EnemyRace) {
-  // TODO: make ElfDistances and GobDistances part of Dungeon.
-  // . are empty, anything else is a barrier, including a friend and #.
-  // for all . neighbours, map them with the shortest distance.
-  // From each enemy, go until you can't find any empty space, increasing the distance on each step.
   std::map<Coord,int> &Distances = (EnemyRace == 'G') ? ElfDistances : GobDistances;
   Distances.clear();
   // Add each enemy as a 0 distance.
@@ -64,12 +62,12 @@ void Dungeon::mapEnemies(char EnemyRace) {
   do {
     // Now, get all the Neighbours.
     std::vector<Coord> Nbors;
-    for (auto Pair : Distances) {   /// Walk first through all Elves, for each Elf...
+    for (auto Pair : Distances) {
       if (Pair.second != Distance)
         continue;
-      for (Coord Nbor : getNeighbours(Pair.first)) { /// find its 0..4 Nbors and....
-        if (getValue(Nbor) == '.' && Distances.count(Nbor) == 0)    /// if it's a valid Nbor....
-          Nbors.emplace_back(Nbor);     /// Add it as a Nbor.
+      for (Coord Nbor : getNeighbours(Pair.first)) {
+        if (getValue(Nbor) == '.' && Distances.count(Nbor) == 0)
+          Nbors.emplace_back(Nbor);
       }
     }
     if (Nbors.empty())
@@ -81,7 +79,7 @@ void Dungeon::mapEnemies(char EnemyRace) {
     }
   } while (true);
 
-  /////////////////////////////
+#ifdef DEBUG
   for (unsigned i = 0; i < Rows; ++i) {
     for (unsigned j = 0; j < Columns; ++j) {
       if (Distances.count(Coord(i, j)))
@@ -91,13 +89,12 @@ void Dungeon::mapEnemies(char EnemyRace) {
     }
     std::cout << "\n";
   }
-
-  ////////////////////////////////
+#endif
 }
 
 
-void Dungeon::move(Unit &U, Direction Dir) {
-  // find Direction to go to. Free Dir variable:
+void Dungeon::move(Unit &U) {
+  // find Direction to go to.
   auto DirMap = (U.Race == 'E') ? ElfDistances : GobDistances;
   std::pair<Direction, int> Min = {Direction::INVALID, 1000000};
   for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
@@ -108,7 +105,7 @@ void Dungeon::move(Unit &U, Direction Dir) {
       }
     }
   }
-  Dir = Min.first;
+  Direction Dir = Min.first;
 
   assert(Min.first != Direction::INVALID);
 
@@ -143,7 +140,7 @@ void Day15::tick() {
     Direction Step = Direction::INVALID;
     // TODO: is any target directly in range?
 //    Cave.findTarget(C.Position, Target, Step);
-    Cave.move(C, Step);
+    Cave.move(C);
     std::cout << "Done with step.\n\n";
 //    if (++counter > 4)
 //      return; // let's go just once.
