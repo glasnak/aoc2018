@@ -3,8 +3,7 @@
 #include "Day15.h"
 #include "Tree.h"
 
-
-#define DEBUG
+//#define DEBUG
 
 // FIXME: make CharMatrix and inherit these.
 void Dungeon::initialize(std::vector<std::string> Lines) {
@@ -50,7 +49,7 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
 /// Then, add each of its neighbours with incrementing distance.
 /// Continue until you run out of neighbours.
 void Dungeon::mapEnemies(char EnemyRace) {
-  std::map<Coord,int> &Distances = (EnemyRace == 'G') ? ElfDistances : GobDistances;
+  std::map<Coord, int> &Distances = (EnemyRace == 'G') ? ElfDistances : GobDistances;
   Distances.clear();
   // Add each enemy as a 0 distance.
   int Distance = 0;
@@ -83,7 +82,7 @@ void Dungeon::mapEnemies(char EnemyRace) {
   for (unsigned i = 0; i < Rows; ++i) {
     for (unsigned j = 0; j < Columns; ++j) {
       if (Distances.count(Coord(i, j)))
-        std::cout << Distances[Coord(i,j)];
+        std::cout << Distances[Coord(i, j)];
       else
         std::cout << M[i][j];
     }
@@ -91,7 +90,6 @@ void Dungeon::mapEnemies(char EnemyRace) {
   }
 #endif
 }
-
 
 void Dungeon::move(Unit &U) {
   // find Direction to go to.
@@ -106,20 +104,21 @@ void Dungeon::move(Unit &U) {
     }
   }
   Direction Dir = Min.first;
-
-  assert(Min.first != Direction::INVALID);
+  if (Dir == Direction::INVALID) {
+    std::cout << "Unit " << U.Race << " can't move from "; U.Position.dump();
+    return;
+  }
 
   // rest of the old function, clean me up:
-  std::cout << "trying to move to " << Dir << "\n";
   Coord Pos = U.Position;
-  if (Dir == Direction::INVALID)
-    assert(!"Invalid direction!\n");
   Coord NewPos = Coord(Pos.x + Move[Dir].first, Pos.y + Move[Dir].second);
   char Val = getValue(Pos);
+#ifdef DEBUG
   Pos.dump();
   std::cout << "     ->";
   NewPos.dump();
   std::cout << "moving to [" << getValue(NewPos) << "]\n";
+#endif
   assert(getValue(NewPos) == '.');  // for now.
   U.Position = NewPos;
   insert(Val, NewPos);
@@ -127,6 +126,12 @@ void Dungeon::move(Unit &U) {
 }
 
 bool Dungeon::attack(Unit U) {
+  for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
+    Coord Nbor = Coord(U.Position.x + Move[D].first, U.Position.y + Move[D].second);
+    if ((U.Race == 'E' && getValue(Nbor) == 'G') || (U.Race == 'G' && getValue(Nbor) == 'E')) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -140,11 +145,10 @@ void Day15::tick() {
   for (auto &U : Cave.Units) {
     Cave.mapEnemies('G');
     Cave.mapEnemies('E');
-    U.Position.dump();
     // TODO: is any target directly in range? Attack if so.
     if (!Cave.attack(U))
       Cave.move(U);
-    std::cout << "Done with step.\n\n";
+//    std::cout << "Done with step.\n\n";
 //    if (++counter > 4)
 //      return; // let's go just once.
   }
@@ -152,10 +156,10 @@ void Day15::tick() {
 
 /// Fight till the battle is over.
 void Day15::fight() {
-  //for (int i = 0; i < 2; ++i) {
-  tick();
-  Cave.dump();
-  //}
+  for (int i = 0; i < 5; ++i) {
+    tick();
+    Cave.dump();
+  }
 }
 
 void Day15::solvePart1() {
