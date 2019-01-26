@@ -11,7 +11,7 @@ void Dungeon::initialize(std::vector<std::string> Lines) {
       char Ch = Lines[i][j];
       insert(Ch, Coord(i, j));
       if (Ch == 'E' || Ch == 'G') {
-        Creatures.emplace_back(Unit(Ch, Coord(i, j)));
+        Units.emplace_back(Unit(Ch, Coord(i, j)));
       }
     }
   }
@@ -29,13 +29,13 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
   return Neighbours;
 }
 
-Direction getFirstStep(std::map<Coord, Direction> VisitedFrom, Coord C) {
-  // go through VisitedFrom from Coord and find the ultimate Source that has Direction::Invalid.
-  if (VisitedFrom[C] == Direction::INVALID) { // This is the first step.
-
-  }
-  return Direction::INVALID;
-}
+//Direction getFirstStep(std::map<Coord, Direction> VisitedFrom, Coord C) {
+//  // go through VisitedFrom from Coord and find the ultimate Source that has Direction::Invalid.
+//  if (VisitedFrom[C] == Direction::INVALID) { // This is the first step.
+//
+//  }
+//  return Direction::INVALID;
+//}
 
 // go through the neighbours, incrementally adding them until we find the target. 
 // Recurse back from it until we find the direction to go to.
@@ -50,11 +50,11 @@ bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep) {
   // init Neighbor queue:
   Coord Source = C;
   std::deque<Coord> Neighbours;
+  std::deque<Coord> NextNeighbours; /// Nbors with distance +1, don't mix them.
   for (auto N : getNeighbours(Source)) {
     Neighbours.push_back(N);
   }
 
-  auto CurrentNbors = getNeighbours(Source);
   // go through neighbours until you find the target.
   do {
     std::cout << "\n CHECKING OUT "; Source.dump();
@@ -71,6 +71,7 @@ bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep) {
       continue;
     }
     if (VisitedFrom[Source] == Direction::INVALID) { /// This is the first step.
+      std::cout << "Found first step.\n";
       if (Nbor.x < Source.x)
         VisitedFrom[Nbor] = Direction::NORTH;
       else if (Source.x < Nbor.x)
@@ -95,12 +96,15 @@ bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep) {
     // Setup for next:
 
     Source = Nbor;
+    /// Add next neighbours:
     for (auto N : getNeighbours(Source)) {
       if (VisitedFrom.count(N) == 0)
-        if (std::find(Neighbours.begin(), Neighbours.end(), N) == Neighbours.end())
+        if (std::find(Neighbours.begin(), Neighbours.end(), N) == Neighbours.end()
+         && std::find(NextNeighbours.begin(), NextNeighbours.end(), N) == NextNeighbours.end())
           Neighbours.push_back(N);
     }
   } while (!Neighbours.empty());
+  std::cout << "not found!\n";
   return false;
 }
 
@@ -112,9 +116,10 @@ void Dungeon::move(Unit C, Direction Dir) {
   Coord NewPos = Coord(Pos.x + Move[Dir].first, Pos.y + Move[Dir].second);
   char Val = getValue(Pos);
   Pos.dump();
+  std::cout << "     ->";
   NewPos.dump();
-  std::cout << "moving to " << getValue(NewPos) << "\n";
-  assert(getValue(NewPos) == '.'); // for now.
+  std::cout << "moving to [" << getValue(NewPos) << "]\n";
+  assert(getValue(NewPos) == '.');  // for now.
   insert(Val, NewPos);
   insert('.', Pos);
 }
@@ -122,9 +127,13 @@ void Dungeon::move(Unit C, Direction Dir) {
 /// One round of the Fight, all Creatures perform one movement or attack.
 void Day15::tick() {
   // reading order:
-  std::sort(Cave.Creatures.begin(), Cave.Creatures.end());
+  std::sort(Cave.Units.begin(), Cave.Units.end());
 
-  for (auto C : Cave.Creatures) {
+//  int counter = 0;
+
+  for (auto &C : Cave.Units) {
+    Cave.mapEnemies('G');
+    Cave.mapEnemies('E');
     C.Position.dump();
     char Target = (C.Race == 'E') ? 'G' : 'E';
     Direction Step = Direction::INVALID;
@@ -132,7 +141,8 @@ void Day15::tick() {
     Cave.findTarget(C.Position, Target, Step);
     Cave.move(C, Step);
     std::cout << "Done with step.\n\n";
-    return; // let's go just once.
+    if (++counter > 1)
+      return; // let's go just once.
   }
 }
 

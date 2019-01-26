@@ -38,7 +38,7 @@ struct Dungeon : Matrix<char> {
 
   void dump() { // kinda override, except no delimiter necessary
     Matrix::dump("");
-    std::cout << Creatures.size() << " Creatures still alive...";
+    std::cout << Units.size() << " Units still alive...";
     // TODO more info
   }
 
