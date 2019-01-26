@@ -31,19 +31,9 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
   return Neighbours;
 }
 
-//Direction getFirstStep(std::map<Coord, Direction> VisitedFrom, Coord C) {
-//  // go through VisitedFrom from Coord and find the ultimate Source that has Direction::Invalid.
-//  if (VisitedFrom[C] == Direction::INVALID) { // This is the first step.
-//
-//  }
-//  return Direction::INVALID;
-//}
-
 
 /// Create a new Dungeon with numbers instead of empty spaces, indicating the distance from the closest enemy.
 /// Unit can then simply browse through directions and choose closest enemy available.
-
-
 /// Go through all the units.
 /// For each U, add its Coord to the map as zero.
 /// Then, add each of its neighbours with incrementing distance.
@@ -148,9 +138,6 @@ void Day15::tick() {
     // TODO: is any target directly in range? Attack if so.
     if (!Cave.attack(U))
       Cave.move(U);
-//    std::cout << "Done with step.\n\n";
-//    if (++counter > 4)
-//      return; // let's go just once.
   }
 }
 
