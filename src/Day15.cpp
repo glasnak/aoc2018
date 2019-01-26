@@ -19,12 +19,11 @@ void Dungeon::initialize(std::vector<std::string> Lines) {
 
 std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
   std::vector<Coord> Neighbours;
-  for (auto N : std::vector<Coord>{Coord(Pos.x - 1, Pos.y),  /// N,E,S,W
-                                   Coord(Pos.x, Pos.y + 1),
-                                   Coord(Pos.x + 1, Pos.y),
-                                   Coord(Pos.x, Pos.y - 1)}) {
-    if (getValue(N) != '#') {
-      Neighbours.emplace_back(N);
+  std::vector<Direction> Dirs = {NORTH, WEST, EAST, SOUTH};
+  for (const auto Dir : Dirs) {
+    Coord NewPos = Coord(Pos.x + Move[Dir].first, Pos.y + Move[Dir].second);
+    if (getValue(NewPos) != '#') {
+      Neighbours.emplace_back(NewPos);
     }
   }
   return Neighbours;
@@ -96,6 +95,11 @@ bool Dungeon::findTarget(Coord C, char Target, Direction &FirstStep) {
     // Setup for next:
 
     Source = Nbor;
+    for (auto N : getNeighbours(Source)) {
+      if (VisitedFrom.count(N) == 0)
+        if (std::find(Neighbours.begin(), Neighbours.end(), N) == Neighbours.end())
+          Neighbours.push_back(N);
+    }
   } while (!Neighbours.empty());
   return false;
 }
