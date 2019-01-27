@@ -31,8 +31,6 @@ struct Dungeon : Matrix<char> {
     bool operator!=(const Unit &rhs) const {
       return !(rhs == *this);
     }
-
-    void attack() {}
   };
   void initialize(std::vector<std::string> Lines);
 

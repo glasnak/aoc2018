@@ -120,7 +120,7 @@ bool Dungeon::attack(Unit U) {
   for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
     Coord Nbor = Coord(U.Position.x + Move[D].first, U.Position.y + Move[D].second);
     if ((U.Race == 'E' && getValue(Nbor) == 'G') || (U.Race == 'G' && getValue(Nbor) == 'E')) {
-      auto NborIter = std::find(Units.begin(), Units.end(), U);
+      auto NborIter = std::find(Units.begin(), Units.end(), Nbor);  //// FIXME, find Unit by Coord. A map?
       assert(NborIter != Units.end() && "Attacked unit not found in Units.");
       if (!MinHPUnit.first || (MinHPUnit.first->Health > NborIter->Health && NborIter->Health > 0))
         MinHPUnit = {&*NborIter, NborIter->Health};
@@ -128,7 +128,7 @@ bool Dungeon::attack(Unit U) {
   }
   if (MinHPUnit.first) {
     MinHPUnit.first->Health -= 3;
-    std::cout << MinHPUnit.first->Race << " was attacked; HP = " << MinHPUnit.first->Health << "\n";
+    std::cout << MinHPUnit.first->Race << " was attacked by " << U.Race << "; HP = " << MinHPUnit.first->Health << "\n";
 
     return true;
   }
@@ -151,7 +151,7 @@ void Day15::tick() {
 
 /// Fight till the battle is over.
 void Day15::fight() {
-  for (int i = 0; i < 5; ++i) {
+  for (int i = 0; i < 50; ++i) {
     tick();
     Cave.dump();
   }
