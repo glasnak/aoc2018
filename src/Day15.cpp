@@ -31,7 +31,6 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
   return Neighbours;
 }
 
-
 /// Create a new Dungeon with numbers instead of empty spaces, indicating the distance from the closest enemy.
 /// Unit can then simply browse through directions and choose closest enemy available.
 /// Go through all the units.
@@ -116,11 +115,22 @@ void Dungeon::move(Unit &U) {
 }
 
 bool Dungeon::attack(Unit U) {
+  std::pair<Unit*, int> MinHPUnit = {nullptr, 1000000};
+
   for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
     Coord Nbor = Coord(U.Position.x + Move[D].first, U.Position.y + Move[D].second);
     if ((U.Race == 'E' && getValue(Nbor) == 'G') || (U.Race == 'G' && getValue(Nbor) == 'E')) {
-      return true;
+      auto NborIter = std::find(Units.begin(), Units.end(), U);
+      assert(NborIter != Units.end() && "Attacked unit not found in Units.");
+      if (!MinHPUnit.first || (MinHPUnit.first->Health > NborIter->Health && NborIter->Health > 0))
+        MinHPUnit = {&*NborIter, NborIter->Health};
     }
+  }
+  if (MinHPUnit.first) {
+    MinHPUnit.first->Health -= 3;
+    std::cout << MinHPUnit.first->Race << " was attacked; HP = " << MinHPUnit.first->Health << "\n";
+
+    return true;
   }
   return false;
 }
@@ -129,8 +139,6 @@ bool Dungeon::attack(Unit U) {
 void Day15::tick() {
   // reading order:
   std::sort(Cave.Units.begin(), Cave.Units.end());
-
-//  int counter = 0;
 
   for (auto &U : Cave.Units) {
     Cave.mapEnemies('G');
