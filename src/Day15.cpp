@@ -120,7 +120,8 @@ bool Dungeon::attack(Unit U) {
   for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
     Coord Nbor = Coord(U.Position.x + Move[D].first, U.Position.y + Move[D].second);
     if ((U.Race == 'E' && getValue(Nbor) == 'G') || (U.Race == 'G' && getValue(Nbor) == 'E')) {
-      auto NborIter = std::find(Units.begin(), Units.end(), Nbor);  //// FIXME, find Unit by Coord. A map?
+      auto NborIter = Units.begin();
+      while (NborIter->Position != Nbor && NborIter != Units.end()) { NborIter++; }
       assert(NborIter != Units.end() && "Attacked unit not found in Units.");
       if (!MinHPUnit.first || (MinHPUnit.first->Health > NborIter->Health && NborIter->Health > 0))
         MinHPUnit = {&*NborIter, NborIter->Health};
