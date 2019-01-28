@@ -26,6 +26,10 @@ struct Coord {
     return (x == other.x && y == other.y);
   }
   
+  bool operator!=(const Coord &other) const {
+    return !operator==(other);
+  }
+  
   // Necessary to use as a map key
   bool operator<(const Coord &rhs) const { // reversed x,y?
     if (x < rhs.x)
