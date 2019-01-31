@@ -54,14 +54,17 @@ void Dungeon::mapEnemies(char EnemyRace) {
       if (Pair.second != Distance)
         continue;
       for (Coord Nbor : getNeighbours(Pair.first)) {
-        if (getValue(Nbor) == '.' && Distances.count(Nbor) == 0)
-          Nbors.emplace_back(Nbor);
+        if (Distances.count(Nbor) == 0) {
+          if (getValue(Nbor) == '.')
+            Nbors.emplace_back(Nbor);
+          else if (getValue(Nbor) == Race && Nbor)
+        }
       }
     }
     if (Nbors.empty())
       break;
     Distance++;
-    // Now that we've found the Nbors we have, let's add them to the map with Distance=1
+    // Now that we've found the Nbors we have, let's add them to the map with Distance++
     for (auto N : Nbors) {
       Distances[N] = Distance;
     }
