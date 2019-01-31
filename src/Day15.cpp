@@ -3,9 +3,6 @@
 #include "Day15.h"
 #include "Tree.h"
 
-//#define DEBUG
-
-// FIXME: make CharMatrix and inherit these.
 void Dungeon::initialize(std::vector<std::string> Lines) {
   fill(' ');
   for (size_t i = 0, e = Lines.size(); i < e; ++i) {
@@ -38,12 +35,15 @@ std::vector<Coord> Dungeon::getNeighbours(Coord Pos) {
 /// Then, add each of its neighbours with incrementing distance.
 /// Continue until you run out of neighbours.
 void Dungeon::mapEnemies(char EnemyRace) {
-  std::map<Coord, int> &Distances = (EnemyRace == 'G') ? ElfDistances : GobDistances;
+  std::map<Coord, int>
+      &Distances = (EnemyRace == 'G') ? ElfDistances : GobDistances;
   Distances.clear();
   // Add each enemy as a 0 distance.
   int Distance = 0;
+  char Race = (EnemyRace == 'E') ? 'G' : 'E';
+  // All live units, set to distance 0
   for (auto U : Units) {
-    if (U.Race != EnemyRace)
+    if (U.Health <= 0 || U.Race == Race)  // ignore friends and dead.
       continue;
     Distances[U.Position] = Distance;
   }
@@ -55,9 +55,9 @@ void Dungeon::mapEnemies(char EnemyRace) {
         continue;
       for (Coord Nbor : getNeighbours(Pair.first)) {
         if (Distances.count(Nbor) == 0) {
-          if (getValue(Nbor) == '.')
+          if (getValue(Nbor) == '.') {
             Nbors.emplace_back(Nbor);
-          else if (getValue(Nbor) == Race && Nbor)
+          }
         }
       }
     }
@@ -69,18 +69,6 @@ void Dungeon::mapEnemies(char EnemyRace) {
       Distances[N] = Distance;
     }
   } while (true);
-
-#ifdef DEBUG
-  for (unsigned i = 0; i < Rows; ++i) {
-    for (unsigned j = 0; j < Columns; ++j) {
-      if (Distances.count(Coord(i, j)))
-        std::cout << Distances[Coord(i, j)];
-      else
-        std::cout << M[i][j];
-    }
-    std::cout << "\n";
-  }
-#endif
 }
 
 void Dungeon::move(Unit &U) {
@@ -90,87 +78,100 @@ void Dungeon::move(Unit &U) {
   for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
     Coord NborPosition = Coord(U.Position.x + Move[D].first, U.Position.y + Move[D].second);
     if (DirMap.count(NborPosition)) {
-      if (Min.second > DirMap[NborPosition]) {  // '>': Keep the first min if there's more equally distant positions.
+      // '>' to keep the first min if there's more equally distant positions.
+      if (Min.second > DirMap[NborPosition]) {
         Min = {D, DirMap[NborPosition]};
       }
     }
   }
   Direction Dir = Min.first;
   if (Dir == Direction::INVALID) {
-    std::cout << "Unit " << U.Race << " can't move from "; U.Position.dump();
     return;
   }
+  // if already in the position of attack, don't move:
+  if (Min.second == 0)
+    return;
 
   // rest of the old function, clean me up:
   Coord Pos = U.Position;
   Coord NewPos = Coord(Pos.x + Move[Dir].first, Pos.y + Move[Dir].second);
   char Val = getValue(Pos);
-#ifdef DEBUG
-  Pos.dump();
-  std::cout << "     ->";
-  NewPos.dump();
-  std::cout << "moving to [" << getValue(NewPos) << "]\n";
-#endif
-  assert(getValue(NewPos) == '.');  // for now.
   U.Position = NewPos;
   insert(Val, NewPos);
   insert('.', Pos);
 }
 
-bool Dungeon::attack(Unit U) {
-  std::pair<Unit*, int> MinHPUnit = {nullptr, 1000000};
+bool Dungeon::attack(Unit U, bool &GameOver) {
+  std::pair<Unit *, int> MinHPUnit = {nullptr, 1000000};
 
   for (auto D : std::vector<Direction>({NORTH, WEST, EAST, SOUTH})) {
     Coord Nbor = Coord(U.Position.x + Move[D].first, U.Position.y + Move[D].second);
-    if ((U.Race == 'E' && getValue(Nbor) == 'G') || (U.Race == 'G' && getValue(Nbor) == 'E')) {
-      auto NborIter = Units.begin();
-      while (NborIter->Position != Nbor && NborIter != Units.end()) { NborIter++; }
-      assert(NborIter != Units.end() && "Attacked unit not found in Units.");
-      if (!MinHPUnit.first || (MinHPUnit.first->Health > NborIter->Health && NborIter->Health > 0))
-        MinHPUnit = {&*NborIter, NborIter->Health};
+    if ((U.Race == 'E' && getValue(Nbor) == 'G')
+        || (U.Race == 'G' && getValue(Nbor) == 'E')) {
+      Unit *Attacked = getUnit(Nbor);
+      if (!MinHPUnit.first || (MinHPUnit.first->Health > Attacked->Health
+          && Attacked->Health > 0))
+        MinHPUnit = {Attacked, Attacked->Health};
     }
   }
   if (MinHPUnit.first) {
-    MinHPUnit.first->Health -= 3;
-    std::cout << MinHPUnit.first->Race << " was attacked by " << U.Race << "; HP = " << MinHPUnit.first->Health << "\n";
-
+    int AttackPower = (U.Race == 'E') ? ElfPower : 3;
+    MinHPUnit.first->Health -= AttackPower;
+    if (MinHPUnit.first->Health < 0) {
+      insert('.', MinHPUnit.first->Position);
+      GameOver = checkWinner();
+    }
     return true;
   }
   return false;
 }
 
 /// One round of the Fight, all Creatures perform one movement or attack.
-void Day15::tick() {
+bool Day15::tick() {
   // reading order:
   std::sort(Cave.Units.begin(), Cave.Units.end());
 
+  bool GameOver = false;
   for (auto &U : Cave.Units) {
-    Cave.mapEnemies('G');
-    Cave.mapEnemies('E');
-    // TODO: is any target directly in range? Attack if so.
-    if (!Cave.attack(U))
-      Cave.move(U);
+    if (Cave.checkWinner())
+      return false;
+    if (U.Health <= 0)
+      continue;
+    if (U.Race == 'G') {
+      Cave.mapEnemies('E');
+    } else {
+      Cave.mapEnemies('G');
+    }
+    Cave.move(U);
+    Cave.attack(U, GameOver);
   }
+  return true;
 }
 
 /// Fight till the battle is over.
 void Day15::fight() {
-  for (int i = 0; i < 50; ++i) {
-    tick();
-    Cave.dump();
+  int round = 0;
+  while (tick()) {
+    round++;
   }
+  std::cout << round * Cave.sumHP() << "\n";
 }
 
 void Day15::solvePart1() {
-  std::vector<std::string> Lines = Util::getLines("inputs/input_15_test.txt");
+  std::vector<std::string> Lines = Util::getLines("inputs/input_15.txt");
   Cave = Dungeon(Lines.size(), Lines[0].size());
   Cave.initialize(Lines);
-  Cave.dump();
   fight();
-  std::cout << -1 << "\n";
 }
 
 void Day15::solvePart2() {
-  std::cout << -1 << "\n";
+  /// Empirically test to be the lowest where elves win:
+  int ElfPower = 11;
+
+  std::vector<std::string> Lines = Util::getLines("inputs/input_15.txt");
+
+  Cave = Dungeon(Lines.size(), Lines[0].size(), ElfPower);
+  Cave.initialize(Lines);
+  fight();
 }
 
