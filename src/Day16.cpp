@@ -73,3 +73,36 @@ void Day16::solvePart1() {
   std::cout << /*"Over 3: " <<*/ ThreeOrMore << "\n";
 }
 
+void Day16::solvePart2() {
+  std::vector<std::string> Lines = Util::getLines("inputs/input_16_2.txt");
+  std::vector<int> Regs(4, 0);
+  int Ra, Rb, Ia, Ib;
+  int Opc, C;
+  for (const auto &Line : Lines) {
+    sscanf(Line.c_str(), "%d %d %d %d", &Opc, &Ia, &Ib, &C);
+    Ra = Regs[Ia];
+    Rb = Regs[Ib];
+    assert(Ra >= 0);  // bitwise operations for negative numbers are UB
+    switch (Opc) {
+      /// These opcodes were semi-manually deduced from part 1:
+      case 6:   Regs[C] = Ra +  Rb; break;
+      case 9:   Regs[C] = Ra +  Ib; break;
+      case 14:  Regs[C] = Ra *  Rb; break;
+      case 1:   Regs[C] = Ra *  Ib; break;
+      case 2:   Regs[C] = Ra &  Rb; break;
+      case 3:   Regs[C] = Ra &  Ib; break;
+      case 12:  Regs[C] = Ra |  Rb; break;
+      case 0:   Regs[C] = Ra |  Ib; break;
+      case 5:   Regs[C] = Ra      ; break;
+      case 8:   Regs[C] = Ia      ; break;
+      case 4:   Regs[C] = Ia >  Rb; break;
+      case 15:  Regs[C] = Ra >  Ib; break;
+      case 13:  Regs[C] = Ra >  Rb; break;
+      case 7:   Regs[C] = Ia == Rb; break;
+      case 11:  Regs[C] = Ra == Ib; break;
+      case 10:  Regs[C] = Ra == Rb; break;
+      default: assert(!"unreachable");
+    }
+  }
+  std::cout << Regs[0] << "\n";
+}
