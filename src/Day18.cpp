@@ -7,7 +7,6 @@ static const bool TESTING = false;
 
 /// Create grid out of input.
 void Day18::parse(const std::vector<std::string> &Lines) {
-  // just to be safe, FIXME: remove this:
   Grid.fill('.');
   for (size_t i = 0, e = Lines.size(); i < e; ++i) {
     for (size_t j = 0, ee = Lines[i].size(); j < ee; ++j) {
@@ -56,9 +55,7 @@ Matrix<char> Day18::step(const Matrix<char> &OldGrid) {
       NewGrid.insert(NewVal, Coord(i, j));
     }
   }
-
   return NewGrid;
-
 }
 
 void Day18::solvePart1() {
@@ -89,8 +86,8 @@ void Day18::solvePart2() {
   std::vector<std::string> Lines = Util::getLines(InputFile);
   parse(Lines);
 
-  /// After an initial phase (~400 cycles, the same grid is repeated each 28 cycles, so each (1,000,000,000 - N*28) 
-  /// works with the same result:
+  /// After an initial phase (~400 cycles), the same grid is repeated each 
+  /// 28 cycles, so each (1,000,000,000 - N*28) works with the same result as 1B
   for (int i = 0; i < 440; ++i) {
     Grid = step(Grid);
   }
