@@ -20,7 +20,7 @@
 #include "Day16.h"
 #include "Day17.h"
 #include "Day18.h"
-// #include "Day19.h"
+#include "Day19.h"
 // #include "Day20.h"
 // #include "Day21.h"
 // #include "Day22.h"
