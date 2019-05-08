@@ -30,7 +30,7 @@ template <typename T> struct Matrix {
 
   /// check if cell position fits the matrix
   bool isInRange(Coord Cell) const {
-    return Cell.x >= 0 && Cell.x < (int) Columns && Cell.y >= 0 && Cell.y < (int) Rows;
+    return Cell.x >= 0 && Cell.x < (int) Rows && Cell.y >= 0 && Cell.y < (int) Columns;
   }
 
   /// get the underlying structure
