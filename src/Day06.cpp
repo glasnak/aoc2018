@@ -3,10 +3,10 @@
 #include "Day06.h"
 
 // for determining the size of matrix we need.
-static Coord findMaxPoint(std::vector<Coord> Pts) {
+static Coord findMaxPoint(const std::vector<Coord> &Pts) {
     int MaxX = std::numeric_limits<int>::min();
     int MaxY = std::numeric_limits<int>::min();
-    for (auto P : Pts) {
+    for (const auto &P : Pts) {
       MaxX = std::max(P.x, MaxX);
       MaxY = std::max(P.y, MaxY);
     }
