@@ -23,14 +23,13 @@ class Day19 : public Day {
     int Op1, Op2, Op3;
   };
   std::vector<Instr> Instrs;
-  int IP;
 #if 0
   void parse(std::vector<std::string> Lines);
   Opcode getOpcode(std::string Inst);
   void run();
 #endif
 public:
-  Day19() : Day(19), IP(0) {
+  Day19() : Day(19) {
     Regs = std::vector<int>(6, 0);
   }
   void solvePart1() override;
