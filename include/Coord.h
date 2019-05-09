@@ -20,6 +20,19 @@ struct Coord {
 
   Coord() : x(0), y(0) {}
   Coord(const int &X, const int &Y) : x(X), y(Y) {}
+  explicit Coord(const std::pair<int,int> &P) : x(P.first), y(P.second) {}
+
+  Coord operator+(const Coord &other) const {
+    return {x + other.x, y + other.y};
+  }
+
+  Coord operator-(const Coord &other) const {
+    return {x - other.x, y - other.y};
+  }
+  
+  Coord operator*(const int &multiplier) const {
+    return {x * multiplier, y * multiplier};
+  }
 
   // necessary for unordered_set comparison
   bool operator==(const Coord &other) const {
