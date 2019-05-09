@@ -1,0 +1,96 @@
+
+
+#ip 1
+[0, 0, 0, 0, 0, 0]
+    ^
+
+0    c = 123                   c = 123
+1    c = c & 456           L1: c &= 456
+2    c = (c == 72)             IF (c == 72)
+3    IP = c + IP                   jmp L5
+4    IP = 0                    jmp L1
+5    c = 0                 L5: c = 0
+6    e = (c | 65536)       L6: e = (c | 65536)
+7    c = 15028787              c = 15028787 
+8    b = e & 255           L8: b = e & 255
+9    c += b                    c += b
+10   c = c & 16777215          c &= 0xFFFFFF
+11   c = c * 65899             c *= 65899
+12   c = c & 16777215          c &= 0xFFFFFF
+13   b = (256 > e)             if (e<256)
+14   IP += b                       jmp L16
+15   IP = IP + 1               jmp L17
+16   IP = 27              L16: jmp L28 
+17   b = 0                L17: b = 0 
+18   d = b + 1            L18: d = b + 1
+19   d *= 256                  d = (b+1) * 256
+20   d = (d > e)               IF (d>e)
+21   IP += d                       jmp L23
+22   IP = 23                   jmp L24 
+23   IP = 25              L23: jmp L26 
+24   b = b + 1            L24: b++
+25   IP = 17                   jmp L18            // seems like a loop 18..24
+26   e = b                L26: e = b
+27   IP = 7                    jmp L8
+28   b = (c == a)         L28: if (c==a)
+29   IP += b                       EXIT
+30   IP = 5                    jmp L6
+
+
+
+
+
+int main() {
+  long a = 0;
+  long b = 0;
+  long c = 0;
+  long d = 0;
+  long e = 0;
+  c = 123;
+L1:
+  c &= 456;
+  c = (c == 72);
+  if (c)
+    goto L5;
+  goto L1;
+L5:
+  c = 0;
+L6:
+  e = c | 65536;
+  c = 15028787;
+L8:
+  b = e & 255;
+  c += b;
+  c &= 16777215;
+  c *= 65899;
+  c &= 16777215;
+  b = (256 > e);
+  if (b)
+    goto L16;
+  goto L17;
+L16:
+  goto L28;
+L17:
+  b = 0;
+L18:
+  d = (b + 1) * 256;
+  d = (d > e);
+  if (d)
+    goto L23;
+  goto L24;
+L23:
+  goto L26;
+L24:
+  b++;
+  goto L18;
+L26:
+  e = b;
+  goto L8;
+L28:
+  printf("%ld\n", c);
+  b = (c == a);
+  if (b) {
+    return d;
+  }
+  goto L6;
+}
