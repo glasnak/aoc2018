@@ -43,7 +43,7 @@ Day19::Opcode Day19::getOpcode(std::string Inst) {
   case 's':
     return (Inst[3] == 'i') ? Day19::Opcode::SETI : Day19::Opcode::SETR;
   default:
-    return Day19::Opcode::INVALID;
+    return Day19::Opcode::INVALID_TYPE;
   }
 }
 
@@ -109,7 +109,7 @@ void Day19::run() {
       Regs[I.Op3] = Regs[I.Op1];
 //      Regs[I.Op2] = Regs[IPReg];
       break;
-    case INVALID:
+    case INVALID_TYPE:
       assert(!"Invalid opcode"); break;
     }
 //    std::cout << "After: ";
