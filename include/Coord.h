@@ -59,5 +59,5 @@ struct Coord {
     return hash;
   }
 
-  void dump() const { std::cout << "[" << x << "," << y << "]\n"; }
+  virtual void dump() const { std::cout << "[" << x << "," << y << "]\n"; }
 };
