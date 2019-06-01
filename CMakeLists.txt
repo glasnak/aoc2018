@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.12)
 project(AdventOfCode2018)
 set (YEAR "2018")
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include
+                     ${CMAKE_CURRENT_SOURCE_DIR}../z3/src/api/c++
+                   )
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -22,7 +24,7 @@ else ()
 endif ()
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -O3 -lz3")
 
 
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
