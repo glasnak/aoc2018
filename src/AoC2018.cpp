@@ -36,7 +36,7 @@ const instantiator_ptr Classes[] = {
     &instantiator<Day22>,
     &instantiator<Day23>,
     &instantiator<Day24>,
-//    &instantiator<Day25>
+    &instantiator<Day25>
 };
 
 // Run all the tests of the AoC
