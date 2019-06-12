@@ -4,13 +4,12 @@
 #include <boost/algorithm/string.hpp>
 
 
-
-
 class Day24 : public Day {
 
   enum ArmyTeam {
     ImmuneSystem,
-    Infection
+    Infection,
+    None
   };
 
   struct Unit {
@@ -21,9 +20,10 @@ class Day24 : public Day {
     std::vector<std::string> Immunities, Weaknesses;
     ArmyTeam Team;
 
-    std::vector<std::string> parseWeakImmune(const std::vector<std::string> &Elements,
-                                             const std::string &WeakOrImmune) {
+    static std::vector<std::string> parseWeakImmune(const std::vector<std::string> &Elements,
+                                                    const std::string &WeakOrImmune) {
       std::vector<std::string> Result;
+      Result.clear();
       auto Element = std::find(Elements.begin(), Elements.end(), WeakOrImmune);
       if (Element != Elements.end()) {
         std::advance(Element, 2);
@@ -35,7 +35,8 @@ class Day24 : public Day {
       }
       return Result;
     }
-    
+
+
     Unit(const std::string &Line, const ArmyTeam AT) : Team(AT) {
       std::vector<std::string> Elements;
       boost::split(Elements, Line, boost::is_any_of(" ();"));
@@ -50,24 +51,42 @@ class Day24 : public Day {
       Element = std::find(Elements.begin(), Elements.end(), "initiative");
       ++Element;
       Initiative = std::stoi(*Element);
-
+      Immunities.clear(); 
+      Weaknesses.clear();
       Weaknesses = parseWeakImmune(Elements, "weak");
-      Weaknesses = parseWeakImmune(Elements, "immune");
+      Immunities = parseWeakImmune(Elements, "immune");
     }
 
-    int getAttack() const { return ArmySize * Attack.first; }
+    int getPower() const { return ArmySize * Attack.first; }
 
-    bool operator<(const Unit &U) const {
-      return getAttack() < U.getAttack() ? true : (getAttack() == U.getAttack()
-                                                   ? (Initiative < U.Initiative)
-                                                   : false);
+    bool operator<(const Unit &Other) const {
+      if (getPower() < Other.getPower())
+        return true;
+      return (getPower() == Other.getPower() ? (Initiative < Other.Initiative) 
+                                               : false);
     }
-    bool operator>(const Unit &U) const { return U < *this; }
+    bool operator>(const Unit &Other) const { return Other < *this; }
+  };
+  
+  struct Attack {
+    Attack(Unit *Att, Unit *Def, int Multi)
+        : Attacker(Att), Defender(Def), Multiplier(Multi) {}
+    Unit *Attacker;
+    Unit *Defender;
+    int Multiplier;
+    bool operator<(const Attack &Other) const {
+      return Attacker->Initiative < Other.Attacker->Initiative;
+    }
+    bool operator>(const Attack &Other) const {
+      return Other < *this;
+    }
   };
 
   std::vector<Unit> Units;
 
-  void fight();
+  bool isFightFinished();
+  std::vector<Day24::Unit> fight(int Boost = 0); 
+  
 public:
   friend std::ostream &operator<<(std::ostream &OS, const Unit &U);
   Day24() : Day(24) {}
